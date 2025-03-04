@@ -16,10 +16,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         window = UIWindow(frame: UIScreen.main.bounds)
 
-        let rootViewController = UIViewController()
-        rootViewController.view.backgroundColor = .red
+        let userListViewController = UserListViewController()
+        let navUserListViewController = UINavigationController(rootViewController: userListViewController)
 
-        window?.rootViewController = rootViewController
+        window?.rootViewController = navUserListViewController
         window?.makeKeyAndVisible()
 
         return true
