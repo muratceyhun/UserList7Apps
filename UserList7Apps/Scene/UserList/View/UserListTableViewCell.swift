@@ -14,7 +14,7 @@ final class UserListTableViewCell: UITableViewCell {
 
     override func awakeFromNib() {
         super.awakeFromNib()
-        backgroundColor = .white
+        backgroundColor = .softWhiteColor
     }
 
     func configure(model: UserListModel) {

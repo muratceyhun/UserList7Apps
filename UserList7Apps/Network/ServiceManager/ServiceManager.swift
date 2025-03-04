@@ -34,4 +34,25 @@ final class ServiceManager {
             }
         }.resume()
     }
+    
+    func getUserDetail(id: Int, success: @escaping(UserListModel) -> Void, failure: @escaping(Error) -> Void) {
+
+        let urlString = "https://jsonplaceholder.typicode.com/users/\(id)"
+
+        URLSession.shared.dataTask(with: URLRequest(url: .init(string: urlString)!)) { data, _, error in
+            if let error = error {
+                print("Failed to get data...", error.localizedDescription)
+                failure(error)
+            }
+            if let data = data {
+                do {
+                    let decodedData = try JSONDecoder().decode(UserListModel.self, from: data)
+                    success(decodedData)
+                } catch let error {
+                    print("Failed to decode data", error.localizedDescription)
+                    failure(error)
+                }
+            }
+        }.resume()
+    }
 }

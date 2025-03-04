@@ -17,11 +17,11 @@ final class UserListViewController: UIViewController {
         super.viewDidLoad()
 
         setNavigation()
-        setupTableView()
         registerCell()
         getUserList()
+        self.tableView.backgroundColor = .softWhiteColor
     }
-    
+
     private func registerCell() {
         tableView.register(UINib(nibName: "UserListTableViewCell", bundle: nil), forCellReuseIdentifier: "UserListTableViewCell")
     }
@@ -43,10 +43,6 @@ final class UserListViewController: UIViewController {
         self.navigationItem.title = "User List"
         self.navigationController?.navigationBar.prefersLargeTitles = true
     }
-
-    private func setupTableView() {
-        tableView.backgroundColor = .brown
-    }
 }
 
 extension UserListViewController: UITableViewDataSource, UITableViewDelegate {
@@ -63,12 +59,16 @@ extension UserListViewController: UITableViewDataSource, UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
         if let model = viewModel.userListModel?[indexPath.row] {
+            if let id = model.id {
+                let userDetailViewController = UserDetailViewController(id: id)
+                self.navigationController?.pushViewController(userDetailViewController, animated: true)
+            }
         }
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         UITableView.automaticDimension
     }
-
 }

@@ -17,7 +17,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window = UIWindow(frame: UIScreen.main.bounds)
 
         let userListViewController = UserListViewController()
-        let navUserListViewController = UINavigationController(rootViewController: userListViewController)
+        let navUserListViewController = BaseNavigationController(rootViewController: userListViewController)
 
         window?.rootViewController = navUserListViewController
         window?.makeKeyAndVisible()
