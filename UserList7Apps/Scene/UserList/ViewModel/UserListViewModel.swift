@@ -14,7 +14,7 @@ final class UserListViewModel {
     var userListModel: [UserListModel]?
 
     func getUserList(completionSuccess: @escaping completionBlock, completionFailure: @escaping completionBlock) {
-        ServiceManager.shared.getUserList(url: "https://jsonplaceholder.typicode.com/users") { userListModel in
+        ServiceManager.shared.getUserList { userListModel in
             self.userListModel = userListModel
             completionSuccess()
         } failure: { error in

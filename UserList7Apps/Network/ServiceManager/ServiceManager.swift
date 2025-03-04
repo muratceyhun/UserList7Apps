@@ -10,49 +10,44 @@ import Foundation
 final class ServiceManager {
 
     static let shared = ServiceManager()
-    
+
     private init() {}
 
-    func getUserList(url: String, success: @escaping([UserListModel]) -> Void, failure: @escaping(Error) -> Void) {
+    private func fetchData<T: Decodable>(urlString: String, success: @escaping (T) -> Void, failure: @escaping (Error) -> Void) {
+        guard let url = URL(string: urlString) else {
+            failure(NSError(domain: "Invalid URL", code: 400, userInfo: nil))
+            return
+        }
 
-        let urlString = url
-
-        URLSession.shared.dataTask(with: URLRequest(url: .init(string: urlString)!)) { data, _, error in
+        URLSession.shared.dataTask(with: URLRequest(url: url)) { data, _, error in
             if let error = error {
                 print("Failed to get data...", error.localizedDescription)
                 failure(error)
+                return
             }
-            if let data = data {
-                do {
-                    let decodedData = try JSONDecoder().decode([UserListModel].self, from: data)
-                    decodedData.forEach{print($0.name ?? "")}
+            guard let data = data else {
+                failure(NSError(domain: "No Data", code: 500, userInfo: nil))
+                return
+            }
+            do {
+                let decodedData = try JSONDecoder().decode(T.self, from: data)
+                DispatchQueue.main.async {
                     success(decodedData)
-                } catch let error {
-                    print("Failed to decode data", error.localizedDescription)
-                    failure(error)
                 }
+            } catch let error {
+                print("Failed to decode data", error.localizedDescription)
+                failure(error)
             }
         }.resume()
     }
-    
-    func getUserDetail(id: Int, success: @escaping(UserListModel) -> Void, failure: @escaping(Error) -> Void) {
 
-        let urlString = "https://jsonplaceholder.typicode.com/users/\(id)"
+    func getUserList(success: @escaping ([UserListModel]) -> Void, failure: @escaping (Error) -> Void) {
+        let url = "https://jsonplaceholder.typicode.com/users"
+        fetchData(urlString: url, success: success, failure: failure)
+    }
 
-        URLSession.shared.dataTask(with: URLRequest(url: .init(string: urlString)!)) { data, _, error in
-            if let error = error {
-                print("Failed to get data...", error.localizedDescription)
-                failure(error)
-            }
-            if let data = data {
-                do {
-                    let decodedData = try JSONDecoder().decode(UserListModel.self, from: data)
-                    success(decodedData)
-                } catch let error {
-                    print("Failed to decode data", error.localizedDescription)
-                    failure(error)
-                }
-            }
-        }.resume()
+    func getUserDetail(id: Int, success: @escaping (UserListModel) -> Void, failure: @escaping (Error) -> Void) {
+        let url = "https://jsonplaceholder.typicode.com/users/\(id)"
+        fetchData(urlString: url, success: success, failure: failure)
     }
 }
